@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import '../services/database.dart';
 import '../models/item.dart';
 import '../widgets/button.dart';
 import '../widgets/input.dart';
-import 'home.dart';
 
 class ItemEditPage extends StatefulWidget {
 
@@ -117,37 +115,36 @@ class _ItemEditPageState extends State<ItemEditPage> {
                                           File(pickedFile!.path!),
                                         ),
                                       )
-                                    ),
-                                  if(pickedFile == null)
-                                    if(item.imagePath == null)
-                                      Container(
-                                        alignment: Alignment.topCenter,
-                                        width: double.infinity,
-                                        height: 235,
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.shade300,
-                                            border: Border.all(width: 2)
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(top: 15),
-                                          child: Text(
-                                            "Загрузить изображение",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
+                                    )
+                                  else if(item.imagePath != null)
+                                    Center(
+                                        child: AspectRatio(
+                                          aspectRatio: 1.5,
+                                          child: Image.network(
+                                            item.imagePath.toString(),
+                                          ),
+                                        )
+                                    )
+                                  else
+                                    Container(
+                                      alignment: Alignment.topCenter,
+                                      width: double.infinity,
+                                      height: 235,
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          border: Border.all(width: 2)
+                                      ),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 15),
+                                        child: Text(
+                                          "Загрузить изображение",
+                                          style: TextStyle(
+                                            fontSize: 18,
                                           ),
                                         ),
                                       ),
-                                    if(item.imagePath != null)
-                                      Center(
-                                          child: AspectRatio(
-                                            aspectRatio: 1.5,
-                                            child: Image.network(
-                                              item.imagePath.toString(),
-                                            ),
-                                          )
-                                      ),
+                                    ),
                                   Container(
                                     alignment: Alignment.center,
                                     padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 65.0),

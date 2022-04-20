@@ -116,8 +116,8 @@ class _AddItemState extends State<AddItem> {
                                               File(pickedFile!.path!),
                                             ),
                                           )
-                                      ),
-                                    if(pickedFile == null)
+                                      )
+                                    else
                                       Container(
                                         alignment: Alignment.topCenter,
                                         width: double.infinity,

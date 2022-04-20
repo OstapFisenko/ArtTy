@@ -138,11 +138,6 @@ class _RegisterState extends State<Register> {
                   Container(
                     child: Stack(
                       children: [
-                        if(pickedFile == null)
-                          Image.asset(
-                            'assets/images/person_avatar.png',
-                            width: 200,
-                          ),
                         if(pickedFile != null)
                           Container(
                             width: 200,
@@ -150,12 +145,17 @@ class _RegisterState extends State<Register> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: FileImage(
-                                  File(pickedFile!.path!),
-                                ),
-                                fit: BoxFit.cover
+                                  image: FileImage(
+                                    File(pickedFile!.path!),
+                                  ),
+                                  fit: BoxFit.cover
                               ),
                             ),
+                          )
+                        else
+                          Image.asset(
+                            'assets/images/person_avatar.png',
+                            width: 200,
                           ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 55.0),
