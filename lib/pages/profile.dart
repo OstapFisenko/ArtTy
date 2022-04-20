@@ -48,15 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Stack(
                     children: [
-
-                      Container(
-                        alignment: Alignment.topCenter,
-                        padding: const EdgeInsets.only(top: 220),
-                        child: Image.asset(
-                          'assets/images/logo_grey.png',
-                          width: 240,
-                        ),
-                      ),
                       SingleChildScrollView(
                         child: Column(
                           children: <Widget>[

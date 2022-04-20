@@ -74,18 +74,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.only(top: 20.0),
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              "assets/images/logo_grey.png",
-            ),
-            scale: 1.5,
-          )
-        ),
-        child: const ItemList(),
-      ),
+      body: const ItemList(),
     );
   }
 }

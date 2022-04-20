@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:artty_app/pages/auth_page.dart';
 import 'package:artty_app/pages/home.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
@@ -30,10 +33,13 @@ class _RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
 
   late UserPerson? user;
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
 
   var db = DatabaseService(uid: '');
   StreamSubscription<List<Item>>? itemsStreamSubscription;
   var items = <Item>[];
+  String? imagePath;
 
   @override
   void dispose() {
@@ -60,6 +66,15 @@ class _RegisterState extends State<Register> {
     super.initState();
   }
 
+  Future selectFile() async{
+    final result = await FilePicker.platform.pickFiles();
+    if(result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<UserPerson?>(context);
@@ -74,7 +89,19 @@ class _RegisterState extends State<Register> {
           password: _passwordController.text.trim(),
         );
         User user = result.user!;
-        await DatabaseService(uid: user.uid).updateUserData(_nameController.text.trim(), _emailController.text.trim());
+        if(pickedFile != null){
+          final path = 'files/${pickedFile!.name}';
+          final file = File(pickedFile!.path!);
+
+          final ref = FirebaseStorage.instance.ref().child(path);
+          uploadTask = ref.putFile(file);
+
+          final snapshot = await uploadTask!.whenComplete(() {});
+
+          final urlDownload = await snapshot.ref.getDownloadURL();
+          imagePath = urlDownload;
+        }
+        await DatabaseService(uid: user.uid).updateUserData(_nameController.text.trim(), _emailController.text.trim(), imagePath);
         Navigator.push(context, MaterialPageRoute(builder: (ctx) => HomePage()));
         _nameController.clear();
         _emailController.clear();
@@ -111,15 +138,33 @@ class _RegisterState extends State<Register> {
                   Container(
                     child: Stack(
                       children: [
-                        Image.asset(
-                          'assets/images/person_avatar.png',
-                          width: 200,
-                        ),
+                        if(pickedFile == null)
+                          Image.asset(
+                            'assets/images/person_avatar.png',
+                            width: 200,
+                          ),
+                        if(pickedFile != null)
+                          Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: FileImage(
+                                  File(pickedFile!.path!),
+                                ),
+                                fit: BoxFit.cover
+                              ),
+                            ),
+                          ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 65.0),
-                          child: Image.asset(
-                            'assets/images/download.png',
-                            width: 70,
+                          padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 55.0),
+                          child: IconButton(
+                            icon: Image.asset(
+                              'assets/images/download.png',
+                            ),
+                            iconSize: 75,
+                            onPressed: selectFile,
                           ),
                         ),
                       ],

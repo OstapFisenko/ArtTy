@@ -39,48 +39,49 @@ class _ItemPageState extends State<ItemPage> {
             String? authName = item.author;
             return Scaffold(
               backgroundColor: Colors.white,
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 40.0),
-                  child: Stack(
-                      children: [
+              body: Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Stack(
+                    children: [
 
-                        Container(
-                          alignment: Alignment.topCenter,
-                          padding: const EdgeInsets.only(top: 220),
-                          child: Image.asset(
-                            'assets/images/logo_grey.png',
-                            width: 240,
-                          ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.only(top: 220),
+                        child: Image.asset(
+                          'assets/images/logo_grey.png',
+                          width: 240,
                         ),
-                        Column(
+                      ),
+                      SingleChildScrollView(
+                        child: Column(
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(50, 10, 20, 10),
-                              child: Container(
-                                padding: const EdgeInsets.all(13),
-                                height: 55,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 2),
-                                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                                ),
-                                child: Text(
-                                  item.name.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                  ),
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              alignment: Alignment.center,
+                              child: Text(
+                                item.name.toString(),
+                                style: const TextStyle(
+                                  fontSize: 18,
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              child: Image.asset(
-                                'assets/images/work_image.png',
-                                height: 220,
+                            if(item.imagePath != null)
+                              Center(
+                                  child: AspectRatio(
+                                    aspectRatio: 1.7,
+                                    child: Image.network(
+                                      item.imagePath.toString(),
+                                    ),
+                                  )
                               ),
-                            ),
+                            if(item.imagePath == null)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                child: Image.asset(
+                                  'assets/images/work_image.png',
+                                  height: 220,
+                                ),
+                              ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                               child: Container(
@@ -179,27 +180,23 @@ class _ItemPageState extends State<ItemPage> {
                                   );
                                 }),
                               ),
-                            )
-                            // SizedBox(
-                            //   height: 400,
-                            //   child: PersonItemsList(authorId: user?.id,),
-                            // )
+                            ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: IconButton(
-                            onPressed: (){
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              size: 40,
-                            ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: IconButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 40,
                           ),
                         ),
-                      ]
-                  ),
+                      ),
+                    ]
                 ),
               ),
             );

@@ -12,7 +12,7 @@ class DatabaseService{
   final CollectionReference _itemsCollection = FirebaseFirestore.instance.collection('items');
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users_info');
 
-  Future updateUserData(String? newName, String? newEmail) async {
+  Future updateUserData(String? newName, String? newEmail, String? newPath) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     String? uID = auth.currentUser?.uid.toString();
     print(_usersCollection.doc(uID));
@@ -21,6 +21,7 @@ class DatabaseService{
     return await _usersCollection.doc(uID).set({
       'name': newName,
       'email': newEmail,
+      'imagePath' : newPath,
     });
   }
 
@@ -33,6 +34,7 @@ class DatabaseService{
       'UserEmail' : item.userEmail,
       'Name' : item.name,
       'Cost' : item.cost,
+      'ImagePath' : item.imagePath,
     });
   }
 

@@ -55,12 +55,22 @@ class _PersonItemsListState extends State<PersonItemsList> {
                   child: Container(
                     key: Key(items[i].id.toString()),
                     margin: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 30),
+                        vertical: 10.0, horizontal: 30),
                     child: Container(
                         decoration: const BoxDecoration(color: Colors.white,),
                         child: Column(
                           children: [
-                            Image.asset('assets/images/work_image.png'),
+                            if(items[i].imagePath != null)
+                              Center(
+                                child: AspectRatio(
+                                  aspectRatio: 1.4,
+                                  child: Image.network(
+                                    items[i].imagePath.toString(),
+                                  ),
+                                ),
+                              ),
+                            if(items[i].imagePath == null)
+                              Image.asset('assets/images/work_image.png'),
                             Container(
                               padding: const EdgeInsets.only(left: 10.0, top: 5.0),
                               alignment: Alignment.topLeft,

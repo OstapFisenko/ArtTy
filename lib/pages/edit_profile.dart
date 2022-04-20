@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:artty_app/widgets/input.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/item.dart';
@@ -25,6 +28,10 @@ class _ProfileEditState extends State<ProfileEdit> {
   late UserPerson user;
   DatabaseService db = DatabaseService();
   StreamSubscription<List<Item>>? itemsStreamSubscription;
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
+  String? imagePath;
 
   @override
   void dispose() {
@@ -35,8 +42,29 @@ class _ProfileEditState extends State<ProfileEdit> {
     super.dispose();
   }
 
-  _buttonSave(String? name, String? email)async{
-    await DatabaseService().updateUserData(name, email);
+  Future selectFile() async{
+    final result = await FilePicker.platform.pickFiles();
+    if(result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
+  }
+
+  _buttonSave(String? name, String? email, String? imagePath)async{
+    if(pickedFile != null){
+      final path = 'files/${pickedFile!.name}';
+      final file = File(pickedFile!.path!);
+
+      final ref = FirebaseStorage.instance.ref().child(path);
+      uploadTask = ref.putFile(file);
+
+      final snapshot = await uploadTask!.whenComplete(() {});
+
+      final urlDownload = await snapshot.ref.getDownloadURL();
+      imagePath = urlDownload;
+    }
+    await DatabaseService().updateUserData(name, email, imagePath);
     Navigator.pop(context);
   }
 
@@ -135,7 +163,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                         padding: const EdgeInsets.only(right: 10.0),
                         child: IconButton(
                           onPressed: (){
-                            _buttonSave(widget.nameController.text, userData.email);
+                            _buttonSave(widget.nameController.text, userData.email, imagePath);
                           },
                           icon: const Icon(
                             Icons.save_outlined,

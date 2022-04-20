@@ -1,9 +1,11 @@
+import 'package:artty_app/pages/edit_item.dart';
 import 'package:artty_app/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/item.dart';
 import '../pages/add_item.dart';
 import '../services/database.dart';
+import '../services/snack_bar.dart';
 
 class UserItemsEdit extends StatefulWidget {
 
@@ -59,7 +61,17 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                         decoration: const BoxDecoration(color: Colors.white,),
                         child: Column(
                           children: [
-                            Image.asset('assets/images/work_image.png'),
+                            if(items[i].imagePath != null)
+                              Center(
+                                child: AspectRatio(
+                                  aspectRatio: 1.4,
+                                  child: Image.network(
+                                    items[i].imagePath.toString(),
+                                  ),
+                                ),
+                              ),
+                            if(items[i].imagePath == null)
+                              Image.asset('assets/images/work_image.png'),
                             Container(
                               padding: const EdgeInsets.only(left: 10.0, top: 5.0),
                               alignment: Alignment.topLeft,
@@ -83,6 +95,7 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                               child: MaterialButton(
                                 onPressed: (){
                                   db.deleteItem(items[i]);
+                                  Utils.showSnackBar("Успешно удалено");
                                 },
                                 minWidth: double.infinity,
                                 child: const Text(
@@ -98,11 +111,11 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                     ),
                   ),
                   onTap: (){
-                    // Navigator.push(
-                    //     context, MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         ItemPage(id: items[i].id))
-                    // );
+                    Navigator.push(
+                        context, MaterialPageRoute(
+                        builder: (context) =>
+                            ItemEditPage(id: items[i].id))
+                    );
                   },
                 );
               },
