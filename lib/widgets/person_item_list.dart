@@ -68,8 +68,8 @@ class _PersonItemsListState extends State<PersonItemsList> {
                                     items[i].imagePath.toString(),
                                   ),
                                 ),
-                              ),
-                            if(items[i].imagePath == null)
+                              )
+                            else
                               Image.asset('assets/images/work_image.png'),
                             Container(
                               padding: const EdgeInsets.only(left: 10.0, top: 5.0),

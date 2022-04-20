@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         shape: Border.all(
-          width: 2
+            width: 2
         ),
         elevation: 0,
         backgroundColor: Colors.white,
@@ -30,9 +30,9 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             padding: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
-              border: Border.all(
-                width: 2.0,
-              )
+                border: Border.all(
+                  width: 2.0,
+                )
             ),
             child: Image.asset(
               'assets/images/profile_Icon.png',
@@ -41,20 +41,20 @@ class _HomePageState extends State<HomePage> {
         ),
         title: TextField(
           controller: _searchController,
-            decoration: const InputDecoration(
-              enabledBorder: UnderlineInputBorder(
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.transparent)
-              ),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent)
-              ),
-              hintText: 'Ведите название работы ...',
-              hintStyle: TextStyle(
-                fontSize: 15,
-              ),
             ),
-            cursorColor: Colors.black,
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)
+            ),
+            hintText: 'Ведите название работы ...',
+            hintStyle: TextStyle(
+              fontSize: 15,
+            ),
           ),
+          cursorColor: Colors.black,
+        ),
         actions: [
           Container(
             width: 56,

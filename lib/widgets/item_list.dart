@@ -47,8 +47,6 @@ class _ItemListState extends State<ItemList> {
                       decoration: const BoxDecoration(color: Colors.white,),
                       child: Column(
                         children: [
-                          if(items[i].imagePath == null)
-                            Image.asset('assets/images/work_image.png'),
                           if(items[i].imagePath != null)
                             Center(
                               child: AspectRatio(
@@ -57,7 +55,9 @@ class _ItemListState extends State<ItemList> {
                                   items[i].imagePath.toString(),
                                 ),
                               ),
-                            ),
+                            )
+                          else
+                            Image.asset('assets/images/work_image.png'),
                           Container(
                             padding: const EdgeInsets.only(left: 10.0, top: 5.0),
                             alignment: Alignment.topLeft,

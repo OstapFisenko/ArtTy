@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 import 'package:artty_app/pages/edit_profile.dart';
 import 'package:artty_app/widgets/person_item_list.dart';
 import 'package:flutter/material.dart';

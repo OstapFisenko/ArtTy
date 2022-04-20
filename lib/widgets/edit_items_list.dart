@@ -55,8 +55,7 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                 return InkWell(
                   child: Container(
                     key: Key(items[i].id.toString()),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 30),
+                    margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30),
                     child: Container(
                         decoration: const BoxDecoration(color: Colors.white,),
                         child: Column(
@@ -69,8 +68,8 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                                     items[i].imagePath.toString(),
                                   ),
                                 ),
-                              ),
-                            if(items[i].imagePath == null)
+                              )
+                            else
                               Image.asset('assets/images/work_image.png'),
                             Container(
                               padding: const EdgeInsets.only(left: 10.0, top: 5.0),
