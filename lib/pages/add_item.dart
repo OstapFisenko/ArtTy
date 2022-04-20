@@ -29,6 +29,7 @@ class _AddItemState extends State<AddItem> {
   late UserData? userData;
   Item itemEdit = Item();
   PlatformFile? pickedFile;
+  UploadTask? uploadTask;
 
   final formKey = GlobalKey<FormState>();
 
@@ -47,15 +48,6 @@ class _AddItemState extends State<AddItem> {
     });
   }
 
-  Future uploadFile() async{
-    final path = 'files/${pickedFile!.name}';
-    final file = File(pickedFile!.path!);
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    ref.putFile(file);
-  }
-
-
   _saveButton(String? name, String? email) async {
     final isValid = formKey.currentState!.validate();
     if(!isValid) return;
@@ -67,6 +59,18 @@ class _AddItemState extends State<AddItem> {
     itemEdit.name = _nameController.text.trim();
     itemEdit.cost = double.parse(_costController.text);
 
+    if(pickedFile != null){
+      final path = 'files/${pickedFile!.name}';
+      final file = File(pickedFile!.path!);
+
+      final ref = FirebaseStorage.instance.ref().child(path);
+      uploadTask = ref.putFile(file);
+
+      final snapshot = await uploadTask!.whenComplete(() {});
+
+      final urlDownload = await snapshot.ref.getDownloadURL();
+      itemEdit.imagePath = urlDownload;
+    }
 
     await DatabaseService().addOrUpdateItem(itemEdit);
     Navigator.pop(context);
@@ -87,15 +91,6 @@ class _AddItemState extends State<AddItem> {
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Stack(
                     children: [
-
-                      Container(
-                        alignment: Alignment.topCenter,
-                        padding: const EdgeInsets.only(top: 220),
-                        child: Image.asset(
-                          'assets/images/logo_grey.png',
-                          width: 240,
-                        ),
-                      ),
                       SingleChildScrollView(
                         child: Form(
                           key: formKey,
@@ -113,24 +108,35 @@ class _AddItemState extends State<AddItem> {
                                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                 child: Stack(
                                   children: [
-                                    Container(
-                                      width: double.infinity,
-                                      height: 200,
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey.shade300,
-                                          border: Border.all(width: 2)
+                                    if(pickedFile != null)
+                                      Center(
+                                          child: AspectRatio(
+                                            aspectRatio: 1.5,
+                                            child: Image.file(
+                                              File(pickedFile!.path!),
+                                            ),
+                                          )
                                       ),
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(top: 15),
-                                        child: Text(
-                                          "Загрузить изображение",
-                                          style: TextStyle(
-                                            fontSize: 18,
+                                    if(pickedFile == null)
+                                      Container(
+                                        alignment: Alignment.topCenter,
+                                        width: double.infinity,
+                                        height: 235,
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade300,
+                                            border: Border.all(width: 2)
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(top: 15),
+                                          child: Text(
+                                            "Загрузить изображение",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
                                     Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 65.0),
