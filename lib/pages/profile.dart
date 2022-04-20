@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:artty_app/pages/edit_profile.dart';
 import 'package:artty_app/widgets/person_item_list.dart';
 import 'package:flutter/material.dart';
@@ -51,14 +52,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       SingleChildScrollView(
                         child: Column(
                           children: <Widget>[
-                            Container(
-                              alignment: Alignment.topCenter,
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: Image.asset(
-                                'assets/images/person_avatar.png',
+                            if(userData!.imagePath != null)
+                              Container(
+                                width: 200,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                        userData.imagePath.toString(),
+                                      ),
+                                      fit: BoxFit.cover
+                                  ),
+                                ),
+                              )
+                            else
+                              Image.asset(
+                                "assets/images/person_avatar.png",
                                 width: 200,
                               ),
-                            ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                               child: Container(
@@ -71,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   borderRadius: const BorderRadius.all(Radius.circular(15.0)),
                                 ),
                                 child: Text(
-                                  userData!.name!,
+                                  userData.name!,
                                   style: const TextStyle(
                                     fontSize: 18,
                                   ),

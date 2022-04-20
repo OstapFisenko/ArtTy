@@ -53,7 +53,7 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   _buttonSave(String? name, String? email, String? imagePath)async{
     if(pickedFile != null){
-      final path = 'files/${pickedFile!.name}';
+      final path = 'users/${pickedFile!.name}';
       final file = File(pickedFile!.path!);
 
       final ref = FirebaseStorage.instance.ref().child(path);
@@ -80,7 +80,8 @@ class _ProfileEditState extends State<ProfileEdit> {
         builder: (context, snapshot) {
           if(snapshot.hasData){
             UserData? userData = snapshot.data;
-            widget.nameController.text = userData!.name!;
+            imagePath = userData!.imagePath;
+            widget.nameController.text = userData.name!;
             return Scaffold(
               backgroundColor: Colors.white,
               body: Padding(
@@ -102,15 +103,47 @@ class _ProfileEditState extends State<ProfileEdit> {
                             Container(
                               child: Stack(
                                 children: [
-                                  Image.asset(
-                                    'assets/images/person_avatar.png',
-                                    width: 200,
-                                  ),
+                                  if(pickedFile != null)
+                                    Container(
+                                      width: 200,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: FileImage(
+                                              File(pickedFile!.path!),
+                                            ),
+                                            fit: BoxFit.cover
+                                        ),
+                                      ),
+                                    )
+                                  else if(userData.imagePath != null)
+                                    Container(
+                                      width: 200,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                              userData.imagePath.toString(),
+                                            ),
+                                            fit: BoxFit.cover
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Image.asset(
+                                      'assets/images/person_avatar.png',
+                                      width: 200,
+                                    ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 65.0),
-                                    child: Image.asset(
-                                      'assets/images/download.png',
-                                      width: 70,
+                                    padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 55.0),
+                                    child: IconButton(
+                                      icon: Image.asset(
+                                        'assets/images/download.png',
+                                      ),
+                                      iconSize: 75,
+                                      onPressed: selectFile,
                                     ),
                                   ),
                                 ],

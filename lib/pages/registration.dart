@@ -90,7 +90,7 @@ class _RegisterState extends State<Register> {
         );
         User user = result.user!;
         if(pickedFile != null){
-          final path = 'files/${pickedFile!.name}';
+          final path = 'users/${pickedFile!.name}';
           final file = File(pickedFile!.path!);
 
           final ref = FirebaseStorage.instance.ref().child(path);
