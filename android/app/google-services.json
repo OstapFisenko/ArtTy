@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "442314975329",
+    "project_id": "artty-b9bbf",
+    "storage_bucket": "artty-b9bbf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442314975329:android:1c4db0777cc4dc28d12220",
+        "android_client_info": {
+          "package_name": "com.asstap.app.artty_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "442314975329-a7bnm213b116fod5nueigtajkg83ftvn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiYU309r3S9uOUwogyjRNz1o93PHNUT4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "442314975329-a7bnm213b116fod5nueigtajkg83ftvn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
