@@ -36,7 +36,6 @@ class _ItemPageState extends State<ItemPage> {
     order.itemImagePath = item.imagePath;
     order.itemCost = item.cost;
     await db.addOrder(order);
-    Navigator.pop(context);
   }
 
   @override
