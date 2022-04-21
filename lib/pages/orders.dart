@@ -46,7 +46,7 @@ class _OrdersPageState extends State<OrdersPage> {
               child: Stack(
                 children: [
                   Container(
-                    padding: const EdgeInsets.only(top: 30),
+                    margin: const EdgeInsets.only(top: 40),
                     height: MediaQuery.of(context).size.height,
                     child: OrdersList(authorId: userData!.id),
                   ),

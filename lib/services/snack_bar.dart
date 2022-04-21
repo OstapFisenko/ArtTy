@@ -9,6 +9,7 @@ class Utils{
     final snackBar = SnackBar(
       content: Text(text),
       backgroundColor: Colors.redAccent,
+      duration: Duration(milliseconds: 1000),
     );
 
     messengerKey.currentState!

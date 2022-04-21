@@ -1,6 +1,7 @@
 import 'package:artty_app/pages/orders.dart';
 import 'package:artty_app/pages/profile.dart';
 import 'package:artty_app/widgets/item_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           Container(
+            alignment: Alignment.topLeft,
             width: 56,
             decoration: BoxDecoration(
                 border: Border.all(
