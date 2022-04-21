@@ -8,13 +8,14 @@ class Item {
   double? cost;
   String? imagePath;
 
-  Item({this.id, this.author, this.description, this.name, this.userEmail, this.cost, this.imagePath});
+  Item({this.id, this.author, this.description, this.name, this.authorId, this.userEmail, this.cost, this.imagePath});
 
   Item.fromJson(String uid, Map<String, dynamic> data) {
     id = uid;
     author = data['Author'];
     description = data['Description'];
     name = data['Name'];
+    authorId = data['AuthorID'];
     userEmail = data['UserEmail'];
     cost = data['Cost'];
     imagePath = data['ImagePath'];

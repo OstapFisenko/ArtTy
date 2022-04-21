@@ -1,3 +1,4 @@
+import 'package:artty_app/pages/orders.dart';
 import 'package:artty_app/pages/profile.dart';
 import 'package:artty_app/widgets/item_list.dart';
 import 'package:flutter/material.dart';
@@ -64,9 +65,12 @@ class _HomePageState extends State<HomePage> {
                 )
             ),
             child: IconButton(
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => OrdersPage()));
+              },
               icon: const Icon(
-                Icons.search_rounded,
+                Icons.shopping_bag_outlined,
                 color: Colors.black,
                 size: 40,
               ),

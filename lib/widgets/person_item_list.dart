@@ -34,7 +34,7 @@ class _PersonItemsListState extends State<PersonItemsList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Item>>(
-        stream: DatabaseService().getItems(widget.authorId),
+        stream: db.getItems(widget.authorId),
         builder: (context, snapshot) {
           if(snapshot.hasData){
             List<Item>? items = snapshot.data;
