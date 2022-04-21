@@ -6,7 +6,7 @@ import '../models/item.dart';
 import '../models/user.dart';
 import '../services/database.dart';
 import '../widgets/button.dart';
-import 'home.dart';
+import 'orders.dart';
 
 class ItemPage extends StatefulWidget {
 
@@ -35,7 +35,6 @@ class _ItemPageState extends State<ItemPage> {
     order.itemDescription = item.description;
     order.itemImagePath = item.imagePath;
     order.itemCost = item.cost;
-    print(item.authorId);
     await db.addOrder(order);
     Navigator.pop(context);
   }
@@ -234,7 +233,10 @@ class _ItemPageState extends State<ItemPage> {
                                                     child: SizedBox(
                                                       height: 50,
                                                       width: 250,
-                                                      child: button("Перейти к заявкам",(){}),
+                                                      child: button("Перейти к заявкам",(){
+                                                        Navigator.push(
+                                                            context, MaterialPageRoute(builder: (context) => const OrdersPage()));
+                                                      }),
                                                     ),
                                                   );
                                                 } else {
@@ -274,8 +276,6 @@ class _ItemPageState extends State<ItemPage> {
                             ),
                           ),
                         );
-
-
                 }
                 else{
                   return const Center(child: CircularProgressIndicator());
@@ -287,6 +287,5 @@ class _ItemPageState extends State<ItemPage> {
           }
         }
     );
-
   }
 }

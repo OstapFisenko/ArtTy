@@ -1,4 +1,5 @@
 import 'package:artty_app/models/order.dart';
+import 'package:artty_app/pages/order_item.dart';
 import 'package:artty_app/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -142,11 +143,11 @@ class _OrdersListState extends State<OrdersList> {
                       ),
                     ),
                     onTap: (){
-                      // Navigator.push(
-                      //     context, MaterialPageRoute(
-                      //     builder: (context) =>
-                      //         ItemPage(id: items[i].id))
-                      // );
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                          builder: (context) =>
+                              OrderItem(id: orders[i].id))
+                      );
                     },
                   );
                 } else {

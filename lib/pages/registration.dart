@@ -124,10 +124,10 @@ class _RegisterState extends State<Register> {
 
             Container(
               alignment: Alignment.topCenter,
-              padding: const EdgeInsets.only(top: 220),
+              padding: const EdgeInsets.only(top: 210),
               child: Image.asset(
                 'assets/images/logo_grey.png',
-                width: 240,
+                width: 200,
               ),
             ),
             SingleChildScrollView(
@@ -171,7 +171,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 190,bottom: 10.0),
+                    padding: const EdgeInsets.only(top: 195,bottom: 10.0),
                     child: input('Имя', _nameController, false, false, 1, (value) =>
                     value != null && value.length < 3
                         ? 'Слишком короткое имя'

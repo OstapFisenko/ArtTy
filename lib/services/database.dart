@@ -76,6 +76,10 @@ class DatabaseService{
         }).toList());
   }
 
+  Stream<Order> get getOrderById{
+    return _ordersCollection.doc(uid).snapshots().map((DocumentSnapshot doc) => Order.fromJson(doc.id, doc.data() as Map<String, dynamic>));
+  }
+
   Future deleteOrder(Order order) async {
     DocumentReference orderRef = _ordersCollection.doc(order.id);
     return orderRef.delete();
@@ -96,7 +100,6 @@ class DatabaseService{
 
 
   Stream<Item> get getItemById{
-    print(_itemsCollection.doc(uid));
     return _itemsCollection.doc(uid).snapshots().map((DocumentSnapshot doc) => Item.fromJson(doc.id, doc.data() as Map<String, dynamic>));
   }
 
