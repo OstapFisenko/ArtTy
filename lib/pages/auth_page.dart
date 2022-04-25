@@ -1,3 +1,4 @@
+import 'package:artty_app/pages/confirm.dart';
 import 'package:artty_app/pages/home.dart';
 import 'package:artty_app/pages/registration.dart';
 import 'package:artty_app/services/snack_bar.dart';
@@ -5,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 import '../models/user.dart';
-import '../services/auth.dart';
 import '../widgets/button.dart';
 import '../widgets/input.dart';
 
@@ -20,11 +20,6 @@ class _AuthPageState extends State<AuthPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  AuthService _authService = AuthService();
-
-  // bool showLogin = true;
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -59,7 +54,6 @@ class _AuthPageState extends State<AuthPage> {
         Utils.showSnackBar(e.message);
         return null;
       }
-      // navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
 
 

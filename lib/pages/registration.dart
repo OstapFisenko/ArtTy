@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:artty_app/pages/auth_page.dart';
+import 'package:artty_app/pages/confirm.dart';
 import 'package:artty_app/pages/home.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -102,7 +103,7 @@ class _RegisterState extends State<Register> {
           imagePath = urlDownload;
         }
         await DatabaseService(uid: user.uid).updateUserData(_nameController.text.trim(), _emailController.text.trim(), imagePath);
-        Navigator.push(context, MaterialPageRoute(builder: (ctx) => HomePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (ctx) => ConfirmEmail()));
         _nameController.clear();
         _emailController.clear();
         _passwordController.clear();
