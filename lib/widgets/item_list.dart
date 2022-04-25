@@ -44,23 +44,29 @@ class _ItemListState extends State<ItemList> {
                     margin: const EdgeInsets.symmetric(
                         vertical: 15.0, horizontal: 30),
                     child: Container(
-                      decoration: const BoxDecoration(color: Colors.white,),
+                      decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
                       child: Column(
                         children: [
-                          if(items[i].imagePath != null)
-                            Center(
-                              child: AspectRatio(
-                                aspectRatio: 1.4,
-                                child: Image.network(
-                                  items[i].imagePath.toString(),
-                                ),
-                              ),
-                            )
-                          else
-                            Image.asset('assets/images/work_image.png'),
                           Container(
-                            padding: const EdgeInsets.only(left: 10.0, top: 5.0),
-                            alignment: Alignment.topLeft,
+                            alignment: Alignment.bottomCenter,
+                            child: Stack(
+                              children: [
+                                Image.asset('assets/images/work_image.png'),
+                                if(items[i].imagePath != null)
+                                  Center(
+                                    child: AspectRatio(
+                                      aspectRatio: 1.4,
+                                      child: Image.network(
+                                        items[i].imagePath.toString(),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            alignment: Alignment.topCenter,
                             child: Text(
                               items[i].name.toString(),
                               style: const TextStyle(

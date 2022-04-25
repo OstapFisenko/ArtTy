@@ -57,7 +57,7 @@ class _PersonItemsListState extends State<PersonItemsList> {
                     margin: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 30),
                     child: Container(
-                        decoration: const BoxDecoration(color: Colors.white,),
+                        decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
                         child: Column(
                           children: [
                             if(items[i].imagePath != null)

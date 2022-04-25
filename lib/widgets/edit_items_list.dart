@@ -57,7 +57,7 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                     key: Key(items[i].id.toString()),
                     margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30),
                     child: Container(
-                        decoration: const BoxDecoration(color: Colors.white,),
+                        decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
                         child: Column(
                           children: [
                             if(items[i].imagePath != null)

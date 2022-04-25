@@ -5,10 +5,11 @@ class Item {
   String? id;
   String? userEmail;
   String? authorId;
+  String? authorPhoto;
   double? cost;
   String? imagePath;
 
-  Item({this.id, this.author, this.description, this.name, this.authorId, this.userEmail, this.cost, this.imagePath});
+  Item({this.id, this.author, this.description, this.name, this.authorId, this.authorPhoto, this.userEmail, this.cost, this.imagePath});
 
   Item.fromJson(String uid, Map<String, dynamic> data) {
     id = uid;
@@ -16,6 +17,7 @@ class Item {
     description = data['Description'];
     name = data['Name'];
     authorId = data['AuthorID'];
+    authorPhoto = data['AuthorPhoto'];
     userEmail = data['UserEmail'];
     cost = data['Cost'];
     imagePath = data['ImagePath'];
@@ -33,7 +35,9 @@ class Item {
     final copiedUserEmail = userEmail;
     final copiedName = name;
     final copiedPath = imagePath;
+    final copiedAuthorPhoto = authorPhoto;
+    final copiedAuthorId = authorId;
 
-    return Item(id: id, author: copiedAuthor, description: copiedDecs, userEmail: copiedUserEmail, name: copiedName, imagePath: copiedPath);
+    return Item(id: id, author: copiedAuthor, description: copiedDecs, userEmail: copiedUserEmail, name: copiedName, imagePath: copiedPath, authorPhoto: copiedAuthorPhoto, authorId: copiedAuthorId);
   }
 }

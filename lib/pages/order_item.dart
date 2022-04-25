@@ -76,21 +76,53 @@ class _OrderItemState extends State<OrderItem> {
                               ),
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(13),
-                            width: MediaQuery.of(context).size.width,
-                            height: 55,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black, width: 2.0),
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: Text(
-                              order.userClientName!,
-                              style: const TextStyle(
-                                fontSize: 18,
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(20,30,20,15),
+                                child: Stack(
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/person_avatar.png",
+                                      width: 50,
+                                    ),
+                                    if(order.authorPhoto != null)
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                order.authorPhoto.toString(),
+                                              ),
+                                              fit: BoxFit.cover
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0,30,20,15),
+                                child: Container(
+                                  padding: const EdgeInsets.all(13),
+                                  height: 55,
+                                  width: 282,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(width: 2),
+                                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                  ),
+                                  child: Text(
+                                    order.userClientName.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const Padding(
                             padding: EdgeInsets.only(top: 20, bottom: 3, left: 10),
@@ -158,6 +190,16 @@ class _OrderItemState extends State<OrderItem> {
                               ),
                             ],
                           ),
+                          if(order.status == 'considered')
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 30),
+                              alignment: Alignment.center,
+                              child: button('Принять', () async{
+                                order.status = 'approved';
+                                await DatabaseService().addOrder(order);
+                                Utils.showInfo('Заявка принята, покупателю на почту отправленно письмо');
+                              }),
+                            ),
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 30),
                             alignment: Alignment.center,

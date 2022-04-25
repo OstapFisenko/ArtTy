@@ -48,7 +48,7 @@ class _AddItemState extends State<AddItem> {
     });
   }
 
-  _saveButton(String? name, String? email) async {
+  _saveButton(String? name, String? email, String? authorPhoto) async {
     final isValid = formKey.currentState!.validate();
     if(!isValid) return;
 
@@ -57,6 +57,7 @@ class _AddItemState extends State<AddItem> {
     itemEdit.description = _descriptionController.text.trim();
     itemEdit.userEmail = email;
     itemEdit.name = _nameController.text.trim();
+    itemEdit.authorPhoto = authorPhoto;
     itemEdit.cost = double.parse(_costController.text);
 
     if(pickedFile != null){
@@ -268,7 +269,7 @@ class _AddItemState extends State<AddItem> {
                                 child: SizedBox(
                                   height: 50,
                                   width: 200,
-                                  child: button("Сохранить",(){_saveButton(userData.name, userData.email);}),
+                                  child: button("Сохранить",(){_saveButton(userData.name, userData.email, userData.imagePath);}),
                                 ),
                               ),
                             ],

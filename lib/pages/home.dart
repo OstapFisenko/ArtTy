@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +38,11 @@ class _HomePageState extends State<HomePage> {
                         width: 2.0,
                       )
                   ),
-                  child: Column(
+                  child: Stack(
                     children: [
+                      Image.asset(
+                        'assets/images/profile_Icon.png',
+                      ),
                       if(user!.imagePath != null)
                         Container(
                           width: 42,
@@ -54,10 +56,6 @@ class _HomePageState extends State<HomePage> {
                                 fit: BoxFit.cover
                             ),
                           ),
-                        )
-                      else
-                        Image.asset(
-                          'assets/images/profile_Icon.png',
                         ),
                     ],
                   ),

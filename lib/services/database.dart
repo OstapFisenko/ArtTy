@@ -17,9 +17,6 @@ class DatabaseService{
   Future updateUserData(String? newName, String? newEmail, String? newPath) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     String? uID = auth.currentUser?.uid.toString();
-    print(_usersCollection.doc(uID));
-    print(newEmail);
-    print(newName);
     return await _usersCollection.doc(uID).set({
       'name': newName,
       'email': newEmail,
@@ -37,6 +34,7 @@ class DatabaseService{
       'Name' : item.name,
       'Cost' : item.cost,
       'ImagePath' : item.imagePath,
+      'AuthorPhoto' : item.authorPhoto,
     });
   }
 
@@ -52,6 +50,8 @@ class DatabaseService{
       'itemDescription' : order.itemDescription,
       'itemImagePath' : order.itemImagePath,
       'itemCost' : order.itemCost,
+      'AuthorPhoto' : order.authorPhoto,
+      'Status' : order.status,
     });
   }
 

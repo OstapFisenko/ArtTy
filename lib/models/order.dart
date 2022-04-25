@@ -9,8 +9,10 @@ class Order{
   String? itemDescription;
   String? itemImagePath;
   double? itemCost;
+  String? authorPhoto;
+  String? status;
 
-  Order({this.userId, this.userClientId, this.userClientName, this.userClientEmail, this.itemId, this.itemName, this.itemDescription, this.itemImagePath , this.itemCost});
+  Order({this.userId, this.userClientId, this.userClientName, this.userClientEmail, this.itemId, this.itemName, this.itemDescription, this.itemImagePath , this.itemCost, this.authorPhoto, this.status});
 
   Order.fromJson(String uid, Map<String, dynamic> data){
     id = uid;
@@ -23,5 +25,7 @@ class Order{
     itemDescription = data['itemDescription'];
     itemImagePath = data['itemImagePath'];
     itemCost = data['itemCost'];
+    authorPhoto = data['AuthorPhoto'];
+    status = data['Status'];
   }
 }

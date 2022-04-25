@@ -2,6 +2,7 @@ import 'package:artty_app/models/order.dart';
 import 'package:artty_app/services/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/item.dart';
 import '../models/user.dart';
 import '../services/database.dart';
@@ -35,7 +36,18 @@ class _ItemPageState extends State<ItemPage> {
     order.itemDescription = item.description;
     order.itemImagePath = item.imagePath;
     order.itemCost = item.cost;
+    order.authorPhoto = item.authorPhoto;
+    order.status = 'considered';
     await db.addOrder(order);
+  }
+
+  _sendMail(String toMail, String subject, String body) async {
+    var url = Uri.parse('mailto:$toMail?subject=$subject&body=$body');
+    if(await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -95,24 +107,53 @@ class _ItemPageState extends State<ItemPage> {
                                               height: 220,
                                             ),
                                           ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(20,30,20,15),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(13),
-                                            height: 55,
-                                            width: MediaQuery.of(context).size.width,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(width: 2),
-                                              borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                                            ),
-                                            child: Text(
-                                              authName.toString(),
-                                              style: const TextStyle(
-                                                fontSize: 18,
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(20,30,20,15),
+                                              child: Stack(
+                                                children: [
+                                                  Image.asset(
+                                                    "assets/images/person_avatar.png",
+                                                    width: 50,
+                                                  ),
+                                                  if(item.authorPhoto != null)
+                                                    Container(
+                                                      width: 50,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                            image: NetworkImage(
+                                                              item.authorPhoto.toString(),
+                                                            ),
+                                                            fit: BoxFit.cover
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
                                             ),
-                                          ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(0,30,20,15),
+                                              child: Container(
+                                                padding: const EdgeInsets.all(13),
+                                                height: 55,
+                                                width: 282,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(width: 2),
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                                ),
+                                                child: Text(
+                                                  authName.toString(),
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
@@ -189,42 +230,120 @@ class _ItemPageState extends State<ItemPage> {
                                               List<Order>? orders = snapshot.data;
                                               try{
                                                 order = orders!.firstWhere((order) => order.itemId == item.id);
-                                                return Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.symmetric(vertical: 15),
-                                                      child: Container(
-                                                        alignment: Alignment.center,
-                                                        height: 50,
-                                                        width: 250,
-                                                        decoration: const BoxDecoration(
-                                                          color: Colors.black,
-                                                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                                                        ),
-                                                        child: const Text(
-                                                          'Заявка оформлена',
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.w500,
-                                                            letterSpacing: 2.0,
-                                                            color: Colors.white
+                                                switch(order.status){
+                                                  case 'considered':
+                                                    return Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: Container(
+                                                            alignment: Alignment.center,
+                                                            height: 50,
+                                                            width: 300,
+                                                            decoration: const BoxDecoration(
+                                                              color: Colors.black,
+                                                              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                                                            ),
+                                                            child: const Text(
+                                                              'Заявка на рассмотрении',
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  letterSpacing: 2.0,
+                                                                  color: Colors.white
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.symmetric(vertical: 15),
-                                                      child: SizedBox(
-                                                        height: 50,
-                                                        width: 250,
-                                                        child: button("Отменить заявку",(){
-                                                          db.deleteOrder(order);
-                                                          Utils.showSnackBar("Заявка отменена");
-                                                        }),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: SizedBox(
+                                                            height: 50,
+                                                            width: 250,
+                                                            child: button("Отменить заявку",(){
+                                                              db.deleteOrder(order);
+                                                              Utils.showSnackBar("Заявка отменена");
+                                                            }),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  case 'approved':
+                                                    Utils.showInfo('Продавец ответил вам, проверьте почту');
+                                                    return Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: Container(
+                                                            alignment: Alignment.center,
+                                                            height: 50,
+                                                            width: 250,
+                                                            decoration: const BoxDecoration(
+                                                              color: Colors.black,
+                                                              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                                                            ),
+                                                            child: const Text(
+                                                              'Заявка принята',
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  letterSpacing: 2.0,
+                                                                  color: Colors.white
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: SizedBox(
+                                                            height: 50,
+                                                            width: 250,
+                                                            child: button("Отменить заявку",(){
+                                                              db.deleteOrder(order);
+                                                              Utils.showSnackBar("Заявка отменена");
+                                                            }),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  default:
+                                                    return Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: Container(
+                                                            alignment: Alignment.center,
+                                                            height: 50,
+                                                            width: 250,
+                                                            decoration: const BoxDecoration(
+                                                              color: Colors.black,
+                                                              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                                                            ),
+                                                            child: const Text(
+                                                              'Заявка оформлена',
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  letterSpacing: 2.0,
+                                                                  color: Colors.white
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          child: SizedBox(
+                                                            height: 50,
+                                                            width: 250,
+                                                            child: button("Отменить заявку",(){
+                                                              db.deleteOrder(order);
+                                                              Utils.showSnackBar("Заявка отменена");
+                                                            }),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                }
                                               } catch(e) {
                                                 if(userData.id == item.authorId){
                                                   return Padding(
@@ -244,8 +363,12 @@ class _ItemPageState extends State<ItemPage> {
                                                     child: SizedBox(
                                                       height: 50,
                                                       width: 250,
-                                                      child: button("Оставить заявку",(){
+                                                      child: button("Оставить заявку",() async{
                                                         _orderButton(userData, item);
+                                                        await _sendMail(item.userEmail!, 'Заявка на картину ${item.name}',
+                                                            'Здравствуйте! Меня заинтересовала ваша кртина "${item.name}".\n\n\n'
+                                                                'Готов купить её, прошу связаться со мной как можно скорее.\n\n\n'
+                                                                'С уважением, ${order.userClientName}!');
                                                       }),
                                                     ),
                                                   );
