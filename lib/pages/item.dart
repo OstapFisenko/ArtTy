@@ -193,7 +193,7 @@ class _ItemPageState extends State<ItemPage> {
                                           alignment: Alignment.bottomLeft,
                                           padding: const EdgeInsets.only(top: 15, bottom: 3, left: 30),
                                           child: const Text(
-                                            "Email покупателя: ",
+                                            "Email автора: ",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 16,
