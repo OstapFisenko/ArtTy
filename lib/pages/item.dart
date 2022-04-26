@@ -113,13 +113,16 @@ class _ItemPageState extends State<ItemPage> {
                                           ),
                                         ),
                                         if(item.imagePath != null)
-                                          Center(
-                                              child: AspectRatio(
-                                                aspectRatio: 1.7,
-                                                child: Image.network(
-                                                  item.imagePath.toString(),
-                                                ),
-                                              )
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 7),
+                                            child: Center(
+                                                child: AspectRatio(
+                                                  aspectRatio: 1.7,
+                                                  child: Image.network(
+                                                    item.imagePath.toString(),
+                                                  ),
+                                                )
+                                            ),
                                           ),
                                         if(item.imagePath == null)
                                           Padding(
