@@ -1,8 +1,8 @@
 import 'package:artty_app/models/order.dart';
 import 'package:artty_app/services/snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../models/item.dart';
 import '../models/user.dart';
 import '../services/database.dart';
@@ -41,14 +41,36 @@ class _ItemPageState extends State<ItemPage> {
     await db.addOrder(order);
   }
 
-  _sendMail(String toMail, String subject, String body) async {
-    var url = Uri.parse('mailto:$toMail?subject=$subject&body=$body');
-    if(await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Future<void> send(String recipient, String subject, String body) async {
+    final Email email = Email(
+      recipients: [recipient],
+      subject: subject,
+      body: body,
+    );
+
+    String platformResponse;
+
+    try{
+      await FlutterEmailSender.send(email);
+      platformResponse = 'Заявка оформлена, письмо отправлено продавцу';
+    } catch(e) {
+      platformResponse = e.toString();
     }
+
+    if(!mounted) return;
+    Utils.showInfo(platformResponse);
   }
+  //
+  // _sendMail(String toMail, String subject, String body) async {
+  //   var url = Uri.parse('mailto:$toMail?subject=$subject&body=$body');
+  //   if(await canLaunchUrl(url)) {
+  //     await launchUrl(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 
   @override
   void initState(){
@@ -107,10 +129,22 @@ class _ItemPageState extends State<ItemPage> {
                                               height: 220,
                                             ),
                                           ),
+                                        Container(
+                                          alignment: Alignment.bottomLeft,
+                                          padding: const EdgeInsets.only(top: 20, bottom: 3, left: 100),
+                                          child: const Text(
+                                            "Автор: ",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
                                         Row(
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(20,30,20,15),
+                                              padding: const EdgeInsets.symmetric(horizontal: 20),
                                               child: Stack(
                                                 children: [
                                                   Image.asset(
@@ -135,7 +169,7 @@ class _ItemPageState extends State<ItemPage> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(0,30,20,15),
+                                              padding: const EdgeInsets.only(right: 20),
                                               child: Container(
                                                 padding: const EdgeInsets.all(13),
                                                 height: 55,
@@ -155,8 +189,20 @@ class _ItemPageState extends State<ItemPage> {
                                             ),
                                           ],
                                         ),
+                                        Container(
+                                          alignment: Alignment.bottomLeft,
+                                          padding: const EdgeInsets.only(top: 15, bottom: 3, left: 30),
+                                          child: const Text(
+                                            "Email покупателя: ",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                                          padding: const EdgeInsets.symmetric(horizontal: 20),
                                           child: Container(
                                             padding: const EdgeInsets.all(13),
                                             height: 55,
@@ -174,8 +220,20 @@ class _ItemPageState extends State<ItemPage> {
                                             ),
                                           ),
                                         ),
+                                        Container(
+                                          alignment: Alignment.bottomLeft,
+                                          padding: const EdgeInsets.only(top: 15, bottom: 3, left: 30),
+                                          child: const Text(
+                                            "Описание: ",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                                          padding: const EdgeInsets.symmetric(horizontal: 20),
                                           child: Container(
                                             padding: const EdgeInsets.all(14),
                                             width: MediaQuery.of(context).size.width,
@@ -192,11 +250,23 @@ class _ItemPageState extends State<ItemPage> {
                                             ),
                                           ),
                                         ),
+                                        Container(
+                                          alignment: Alignment.topLeft,
+                                          padding: const EdgeInsets.only(top: 15, bottom: 3, left: 30),
+                                          child: const Text(
+                                            "Цена: ",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(20, 15, 10, 15),
+                                              padding: const EdgeInsets.fromLTRB(20, 0, 10, 15),
                                               child: Container(
                                                 padding: const EdgeInsets.all(13),
                                                 height: 55,
@@ -269,9 +339,9 @@ class _ItemPageState extends State<ItemPage> {
                                                       ],
                                                     );
                                                   case 'approved':
-                                                    Utils.showInfo('Продавец ответил вам, проверьте почту');
                                                     return Column(
                                                       children: [
+
                                                         Padding(
                                                           padding: const EdgeInsets.symmetric(vertical: 15),
                                                           child: Container(
@@ -363,12 +433,9 @@ class _ItemPageState extends State<ItemPage> {
                                                     child: SizedBox(
                                                       height: 50,
                                                       width: 250,
-                                                      child: button("Оставить заявку",() async{
+                                                      child: button("Оставить заявку",() {
                                                         _orderButton(userData, item);
-                                                        await _sendMail(item.userEmail!, 'Заявка на картину ${item.name}',
-                                                            'Здравствуйте! Меня заинтересовала ваша кртина "${item.name}".\n\n\n'
-                                                                'Готов купить её, прошу связаться со мной как можно скорее.\n\n\n'
-                                                                'С уважением, ${order.userClientName}!');
+                                                        send(item.userEmail!, order.itemName!, 'хочу купить вашу картину "${order.userClientName!}"');
                                                       }),
                                                     ),
                                                   );

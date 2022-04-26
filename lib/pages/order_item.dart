@@ -4,6 +4,7 @@ import 'package:artty_app/services/snack_bar.dart';
 import 'package:artty_app/widgets/button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class OrderItem extends StatefulWidget {
   final String? id;
@@ -14,6 +15,26 @@ class OrderItem extends StatefulWidget {
 }
 
 class _OrderItemState extends State<OrderItem> {
+  Future<void> send(String recipient, String subject, String body) async {
+    final Email email = Email(
+      recipients: [recipient],
+      subject: subject,
+      body: body,
+    );
+
+    String platformResponse;
+
+    try{
+      await FlutterEmailSender.send(email);
+      platformResponse = 'Заявка принята, письмо отправленно покупателю';
+    } catch(e) {
+      platformResponse = e.toString();
+    }
+
+    if(!mounted) return;
+    Utils.showInfo(platformResponse);
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Order>(
@@ -66,7 +87,7 @@ class _OrderItemState extends State<OrderItem> {
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(top: 20, bottom: 3, left: 10),
+                            padding: EdgeInsets.only(top: 20, bottom: 3, left: 80),
                             child: Text(
                               "Имя покупателя: ",
                               textAlign: TextAlign.left,
@@ -79,7 +100,7 @@ class _OrderItemState extends State<OrderItem> {
                           Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(20,30,20,15),
+                                padding: const EdgeInsets.fromLTRB(0,0,20,15),
                                 child: Stack(
                                   children: [
                                     Image.asset(
@@ -104,7 +125,7 @@ class _OrderItemState extends State<OrderItem> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(0,30,20,15),
+                                padding: const EdgeInsets.only(bottom: 15),
                                 child: Container(
                                   padding: const EdgeInsets.all(13),
                                   height: 55,
@@ -197,7 +218,7 @@ class _OrderItemState extends State<OrderItem> {
                               child: button('Принять', () async{
                                 order.status = 'approved';
                                 await DatabaseService().addOrder(order);
-                                Utils.showInfo('Заявка принята, покупателю на почту отправленно письмо');
+                                send(order.userClientEmail!, order.itemName!, 'Договорились');
                               }),
                             ),
                           Container(

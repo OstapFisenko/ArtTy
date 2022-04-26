@@ -45,6 +45,7 @@ class _ItemListState extends State<ItemList> {
                         vertical: 15.0, horizontal: 30),
                     child: Container(
                       decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
+                      padding: EdgeInsets.only(bottom: 10),
                       child: Column(
                         children: [
                           Container(
