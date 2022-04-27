@@ -6,21 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/item.dart';
 import '../models/user.dart';
-import '../services/auth.dart';
 import '../services/database.dart';
-import '../widgets/button.dart';
-import 'auth_page.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class AuthorProfilePage extends StatefulWidget {
+  final String? id;
+  const AuthorProfilePage({Key? key, required this.id}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _AuthorProfilePageState createState() => _AuthorProfilePageState();
 }
 
 
 
-class _ProfilePageState extends State<ProfilePage> {
+class _AuthorProfilePageState extends State<AuthorProfilePage> {
   UserPerson? user;
   DatabaseService db = DatabaseService();
   StreamSubscription<List<Item>>? itemsStreamSubscription;
@@ -41,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
     user = Provider.of<UserPerson?>(context);
 
     return StreamBuilder<UserData>(
-        stream: DatabaseService().userData,
+        stream: DatabaseService(uid: widget.id).getUserById,
         builder: (context, snapshot) {
           if(snapshot.hasData){
             UserData? userData = snapshot.data;
@@ -111,20 +109,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: SizedBox(
-                                  height: 50,
-                                  width: 200,
-                                  child: button("Выйти", (){
-                                    AuthService().logOut();
-                                    Navigator.push(context, MaterialPageRoute(builder: (ctx) => AuthPage()));
-                                  })
-                              ),
-                            ),
                             SizedBox(
-                              height: 350,
-                              child: PersonItemsList(authorId: user?.id,),
+                              height: 400,
+                              child: PersonItemsList(authorId: widget.id,),
                             )
                           ],
                         ),
@@ -138,20 +125,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           size: 40,
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: IconButton(
-                          onPressed: (){
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => ProfileEdit()));
-                          },
-                          icon: const Icon(
-                            Icons.edit_outlined,
-                            size: 40,
-                          ),
-                        ),
-                      )
                     ]
                 ),
               ),

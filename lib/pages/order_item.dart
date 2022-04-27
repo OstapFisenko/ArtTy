@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
+import 'author_profile.dart';
+
 class OrderItem extends StatefulWidget {
   final String? id;
   const OrderItem({Key? key, required this.id}) : super(key: key);
@@ -97,53 +99,62 @@ class _OrderItemState extends State<OrderItem> {
                               ),
                             ),
                           ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0,0,20,15),
-                                child: Stack(
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/person_avatar.png",
-                                      width: 50,
-                                    ),
-                                    if(order.authorPhoto != null)
-                                      Container(
+                          InkWell(
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0,0,20,15),
+                                  child: Stack(
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/person_avatar.png",
                                         width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                order.authorPhoto.toString(),
-                                              ),
-                                              fit: BoxFit.cover
+                                      ),
+                                      if(order.authorPhoto != null)
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                  order.authorPhoto.toString(),
+                                                ),
+                                                fit: BoxFit.cover
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                child: Container(
-                                  padding: const EdgeInsets.all(13),
-                                  height: 55,
-                                  width: 282,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(width: 2),
-                                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                    ],
                                   ),
-                                  child: Text(
-                                    order.userClientName.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(13),
+                                    height: 55,
+                                    width: 282,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(width: 2),
+                                      borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                    ),
+                                    child: Text(
+                                      order.userClientName.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                            onTap: (){
+                              Navigator.push(
+                                  context, MaterialPageRoute(
+                                  builder: (context) =>
+                                      AuthorProfilePage(id: order.userClientId))
+                              );
+                            },
                           ),
                           const Padding(
                             padding: EdgeInsets.only(top: 20, bottom: 3, left: 10),
@@ -213,19 +224,23 @@ class _OrderItemState extends State<OrderItem> {
                           ),
                           if(order.status == 'considered')
                             Container(
-                              padding: const EdgeInsets.symmetric(vertical: 30),
-                              alignment: Alignment.center,
-                              child: button('Принять', () async{
-                                order.status = 'approved';
-                                await DatabaseService().addOrder(order);
-                                send(order.userClientEmail!, order.itemName!, 'Договорились');
-                              }),
+                              alignment: Alignment.topCenter,
+                              padding: const EdgeInsets.only(top: 20),
+                              child: SizedBox(
+                                height: 45,
+                                width: 220,
+                                child: button('Принять', () {
+                                  order.status = 'approved';
+                                  DatabaseService().addOrder(order);
+                                  send(order.userClientEmail!, order.itemName!, 'Договорились');
+                                }),
+                              ),
                             ),
                           Container(
-                            padding: const EdgeInsets.symmetric(vertical: 30),
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             alignment: Alignment.center,
                             child: SizedBox(
-                              width: 230,
+                              width: 220,
                               height: 45,
                               child: MaterialButton(
                                 splashColor: Colors.red,

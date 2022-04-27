@@ -43,70 +43,79 @@ class _UserItemsEditState extends State<UserItemsEdit> {
               itemCount: items!.length+1,
               itemBuilder: (context, int i){
                 if(i == items.length){
-                  return Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 90),
-                    child: button("Добавить работу", (){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => AddItem()));
-                    })
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 90),
+                      child: button("Добавить работу", (){
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => AddItem()));
+                      })
+                    ),
                   );
                 }
                 return InkWell(
-                  child: Container(
-                    key: Key(items[i].id.toString()),
-                    margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                     child: Container(
-                        decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
-                        child: Column(
-                          children: [
-                            if(items[i].imagePath != null)
-                              Center(
-                                child: AspectRatio(
-                                  aspectRatio: 1.4,
-                                  child: Image.network(
-                                    items[i].imagePath.toString(),
+                      key: Key(items[i].id.toString()),
+                      child: Container(
+                          decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
+                          child: Column(
+                            children: [
+                              if(items[i].imagePath != null)
+                                Center(
+                                  child: AspectRatio(
+                                    aspectRatio: 1.4,
+                                    child: Image.network(
+                                      items[i].imagePath.toString(),
+                                    ),
+                                  ),
+                                )
+                              else
+                                Image.asset('assets/images/work_image.png'),
+                              Container(
+                                padding: const EdgeInsets.only(left: 10.0, top: 5.0),
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  items[i].name.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  width: 200,
+                                  height: 45,
+                                  alignment: Alignment.topCenter,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: Colors.redAccent, width: 2),
+                                    borderRadius: const BorderRadius.all(Radius.circular(25.0))
+                                  ),
+                                  child: MaterialButton(
+                                    onPressed: (){
+                                      db.deleteItem(items[i]);
+                                      Utils.showSnackBar("Успешно удалено");
+                                    },
+                                    minWidth: double.infinity,
+                                    child: const Text(
+                                      "Удалить",
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 18,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               )
-                            else
-                              Image.asset('assets/images/work_image.png'),
-                            Container(
-                              padding: const EdgeInsets.only(left: 10.0, top: 5.0),
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                items[i].name.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 200,
-                              height: 40,
-                              alignment: Alignment.topCenter,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.redAccent, width: 2),
-                                borderRadius: const BorderRadius.all(Radius.circular(25.0))
-                              ),
-                              child: MaterialButton(
-                                onPressed: (){
-                                  db.deleteItem(items[i]);
-                                  Utils.showSnackBar("Успешно удалено");
-                                },
-                                minWidth: double.infinity,
-                                child: const Text(
-                                  "Удалить",
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        )
+                            ],
+                          )
+                      ),
                     ),
                   ),
                   onTap: (){

@@ -1,10 +1,9 @@
-import 'package:artty_app/widgets/button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/item.dart';
-import '../pages/auth_page.dart';
-import '../services/auth.dart';
+import '../pages/item.dart';
 import '../services/database.dart';
 
 class PersonItemsList extends StatefulWidget {
@@ -25,7 +24,7 @@ class _PersonItemsListState extends State<PersonItemsList> {
   @override
   void dispose() {
     if(itemsStreamSubscription != null){
-      print('Unsubscribing');
+      log('Unsubscribing');
       itemsStreamSubscription?.cancel();
     }
     super.dispose();
@@ -39,59 +38,56 @@ class _PersonItemsListState extends State<PersonItemsList> {
           if(snapshot.hasData){
             List<Item>? items = snapshot.data;
             return ListView.builder(
-              itemCount: items!.length+1,
+              itemCount: items!.length,
               itemBuilder: (context, int i){
-                if(i == items.length){
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 90),
-                    height: 50,
-                    child: button("Выйти", (){
-                      AuthService().logOut();
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) => AuthPage()));
-                    })
-                  );
-                }
                 return InkWell(
-                  child: Container(
-                    key: Key(items[i].id.toString()),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 30),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                     child: Container(
-                        decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
-                        child: Column(
-                          children: [
-                            if(items[i].imagePath != null)
-                              Center(
-                                child: AspectRatio(
-                                  aspectRatio: 1.4,
-                                  child: Image.network(
-                                    items[i].imagePath.toString(),
+                      key: Key(items[i].id.toString()),
+                      child: Container(
+                          decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                child: Stack(
+                                  children: [
+                                    Image.asset('assets/images/work_image.png'),
+                                    if(items[i].imagePath != null)
+                                      Center(
+                                        child: AspectRatio(
+                                          aspectRatio: 1.4,
+                                          child: Image.network(
+                                            items[i].imagePath.toString(),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  items[i].name.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
                                   ),
                                 ),
                               )
-                            else
-                              Image.asset('assets/images/work_image.png'),
-                            Container(
-                              padding: const EdgeInsets.only(left: 10.0, top: 5.0),
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                items[i].name.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            )
-                          ],
-                        )
+                            ],
+                          )
+                      ),
                     ),
                   ),
                   onTap: (){
-                    // Navigator.push(
-                    //     context, MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         ItemPage(id: items[i].id))
-                    // );
+                    Navigator.push(
+                        context, MaterialPageRoute(
+                        builder: (context) =>
+                            ItemPage(id: items[i].id))
+                    );
                   },
                 );
               },

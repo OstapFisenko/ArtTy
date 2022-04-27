@@ -98,6 +98,17 @@ class DatabaseService{
         }).toList());
   }
 
+  Stream<List<Item>> searchItem(String text) {
+    if(text.isNotEmpty){
+      return _itemsCollection.where((name) => name['Name'].toString().toLowerCase().contains(text.toLowerCase().toString())).snapshots().map((QuerySnapshot data) =>
+          data.docs.map((DocumentSnapshot doc) {
+            return Item.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+          }).toList());
+    } else {
+      return DatabaseService().getItems(null);
+    }
+  }
+
 
   Stream<Item> get getItemById{
     return _itemsCollection.doc(uid).snapshots().map((DocumentSnapshot doc) => Item.fromJson(doc.id, doc.data() as Map<String, dynamic>));
@@ -113,4 +124,9 @@ class DatabaseService{
     String? uID = auth.currentUser?.uid.toString();
     return _usersCollection.doc(uID).snapshots().map((DocumentSnapshot doc) => UserData.fromJson(doc.id, doc.data() as  Map<String, dynamic>));
   }
+
+  Stream<UserData> get getUserById{
+    return _usersCollection.doc(uid).snapshots().map((DocumentSnapshot doc) => UserData.fromJson(doc.id, doc.data() as Map<String, dynamic>));
+  }
+
 }

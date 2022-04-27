@@ -1,4 +1,5 @@
 import 'package:artty_app/models/order.dart';
+import 'package:artty_app/pages/author_profile.dart';
 import 'package:artty_app/services/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -36,12 +37,10 @@ class _ItemPageState extends State<ItemPage> {
     order.itemDescription = item.description;
     order.itemImagePath = item.imagePath;
     order.itemCost = item.cost;
-    order.authorPhoto = item.authorPhoto;
+    order.authorPhoto = userData.imagePath;
     order.status = 'considered';
     await db.addOrder(order);
   }
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> send(String recipient, String subject, String body) async {
     final Email email = Email(
@@ -54,7 +53,7 @@ class _ItemPageState extends State<ItemPage> {
 
     try{
       await FlutterEmailSender.send(email);
-      platformResponse = 'Заявка оформлена, письмо отправлено продавцу';
+      platformResponse = 'Заявка оформлена';
     } catch(e) {
       platformResponse = e.toString();
     }
@@ -144,53 +143,62 @@ class _ItemPageState extends State<ItemPage> {
                                             ),
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                                              child: Stack(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/images/person_avatar.png",
-                                                    width: 50,
-                                                  ),
-                                                  if(item.authorPhoto != null)
-                                                    Container(
+                                        InkWell(
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                child: Stack(
+                                                  children: [
+                                                    Image.asset(
+                                                      "assets/images/person_avatar.png",
                                                       width: 50,
-                                                      height: 50,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        image: DecorationImage(
-                                                            image: NetworkImage(
-                                                              item.authorPhoto.toString(),
-                                                            ),
-                                                            fit: BoxFit.cover
+                                                    ),
+                                                    if(item.authorPhoto != null)
+                                                      Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          image: DecorationImage(
+                                                              image: NetworkImage(
+                                                                item.authorPhoto.toString(),
+                                                              ),
+                                                              fit: BoxFit.cover
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(right: 20),
-                                              child: Container(
-                                                padding: const EdgeInsets.all(13),
-                                                height: 55,
-                                                width: 282,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(width: 2),
-                                                  borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                                  ],
                                                 ),
-                                                child: Text(
-                                                  authName.toString(),
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: 20),
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(13),
+                                                  height: 55,
+                                                  width: 282,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(width: 2),
+                                                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                                  ),
+                                                  child: Text(
+                                                    authName.toString(),
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
+                                          onTap: (){
+                                            Navigator.push(
+                                                context, MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuthorProfilePage(id: item.authorId))
+                                            );
+                                          },
                                         ),
                                         Container(
                                           alignment: Alignment.bottomLeft,
@@ -267,6 +275,7 @@ class _ItemPageState extends State<ItemPage> {
                                         ),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(20, 0, 10, 15),
@@ -288,7 +297,7 @@ class _ItemPageState extends State<ItemPage> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.only(right: 20),
+                                              padding: const EdgeInsets.only(right: 20, top: 12.5),
                                               child: Image.asset(
                                                 'assets/images/rouble_icon.png',
                                                 width: 30,
@@ -308,7 +317,7 @@ class _ItemPageState extends State<ItemPage> {
                                                     return Column(
                                                       children: [
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          padding: const EdgeInsets.symmetric(vertical: 10),
                                                           child: Container(
                                                             alignment: Alignment.center,
                                                             height: 50,
@@ -346,7 +355,7 @@ class _ItemPageState extends State<ItemPage> {
                                                       children: [
 
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          padding: const EdgeInsets.symmetric(vertical: 10),
                                                           child: Container(
                                                             alignment: Alignment.center,
                                                             height: 50,
@@ -383,7 +392,7 @@ class _ItemPageState extends State<ItemPage> {
                                                     return Column(
                                                       children: [
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(vertical: 15),
+                                                          padding: const EdgeInsets.symmetric(vertical: 10),
                                                           child: Container(
                                                             alignment: Alignment.center,
                                                             height: 50,
@@ -420,7 +429,7 @@ class _ItemPageState extends State<ItemPage> {
                                               } catch(e) {
                                                 if(userData.id == item.authorId){
                                                   return Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 15),
+                                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                                     child: SizedBox(
                                                       height: 50,
                                                       width: 250,
@@ -432,13 +441,14 @@ class _ItemPageState extends State<ItemPage> {
                                                   );
                                                 } else {
                                                   return Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 15),
+                                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                                     child: SizedBox(
                                                       height: 50,
                                                       width: 250,
                                                       child: button("Оставить заявку",() {
                                                         _orderButton(userData, item);
-                                                        send(item.userEmail!, order.itemName!, 'хочу купить вашу картину "${order.userClientName!}"');
+                                                        send(item.userEmail!, order.itemName!, 'Здравствуйте, хочу купить вашу картину "${order.itemName!}"\n\n\n'
+                                                            'С уважением, ${order.userClientName}');
                                                       }),
                                                     ),
                                                   );

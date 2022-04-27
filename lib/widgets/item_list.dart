@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import '../models/item.dart';
 import '../models/user.dart';
@@ -14,86 +15,151 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemListState extends State<ItemList> {
+  final _searchController = TextEditingController();
+  String? text;
+  List<Item> items = [];
+  Timer? debouncer;
+
   late UserPerson user;
 
   DatabaseService db = DatabaseService();
   StreamSubscription<List<Item>>? itemsStreamSubscription;
 
   @override
+  void initState() {
+    super.initState();
+
+  }
+
+  @override
   void dispose() {
     if(itemsStreamSubscription != null){
       itemsStreamSubscription?.cancel();
     }
+    debouncer?.cancel();
     super.dispose();
   }
+
+  void debounce(VoidCallback callback, {Duration duration = const Duration(milliseconds: 1000),}) {
+    if(debouncer != null){
+      debouncer!.cancel();
+    }
+    debouncer = Timer(duration, callback);
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Item>>(
-        stream: DatabaseService().getItems(null),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Item>? items = snapshot.data;
-            return ListView.builder(
-              itemCount: items?.length,
-              itemBuilder: (context, i) {
-                return InkWell(
-                  child: Container(
-                    key: Key(items![i].id.toString()),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 30),
-                    child: Container(
-                      decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.bottomCenter,
-                            child: Stack(
-                              children: [
-                                Image.asset('assets/images/work_image.png'),
-                                if(items[i].imagePath != null)
-                                  Center(
-                                    child: AspectRatio(
-                                      aspectRatio: 1.4,
-                                      child: Image.network(
-                                        items[i].imagePath.toString(),
+      stream: DatabaseService().getItems(null),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting || snapshot.hasData != true){
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if(_searchController.text.isEmpty || items.isEmpty){
+            items = snapshot.data!;
+          }
+          // else if(_searchController.text.isNotEmpty && items!.isEmpty){
+          // }
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.search, color: Colors.black,),
+                      suffixIcon: _searchController.text.isNotEmpty ? GestureDetector(
+                        child: const Icon(Icons.clear_rounded, color: Colors.black,),
+                        onTap: (){
+                          _searchController.clear();
+                          FocusScope.of(context).requestFocus(FocusNode());
+                        },
+                      ) : null,
+                      hintText: 'Name',
+                    ),
+                    onSubmitted: (value) {
+
+                      setState(() {
+                        items = items.where((item) => item.name!.toLowerCase()
+                            .contains(value.toString().trim().toLowerCase())).toList();
+                        log(items.toString());
+                      });
+                    },
+                  ),
+                ),
+                if(items.length != null)
+                  SizedBox(
+                    height: 640,
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        log(items.toString());
+                        return InkWell(
+                          child: Container(
+                            key: Key(items[i].id.toString()),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 30),
+                            child: Container(
+                                decoration: const BoxDecoration(color: Color(0xfff1f2f4),),
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Stack(
+                                        children: [
+                                          Image.asset('assets/images/work_image.png'),
+                                          if(items[i].imagePath != null)
+                                            Center(
+                                              child: AspectRatio(
+                                                aspectRatio: 1.4,
+                                                child: Image.network(
+                                                  items[i].imagePath.toString(),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                              ],
+                                    Container(
+                                      padding: const EdgeInsets.only(top: 5.0),
+                                      alignment: Alignment.topCenter,
+                                      child: Text(
+                                        items[i].name.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              items[i].name.toString(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20,
-                              ),
-                            ),
-                          )
-                        ],
-                      )
+                          onTap: (){
+                            Navigator.push(
+                                context, MaterialPageRoute(
+                                builder: (context) =>
+                                    ItemPage(id: items[i].id))
+                            );
+                          },
+                        );
+                      },
                     ),
-                  ),
-                  onTap: (){
-                    Navigator.push(
-                        context, MaterialPageRoute(
-                        builder: (context) =>
-                            ItemPage(id: items[i].id))
-                    );
-                  },
-                );
-              },
-            );
-          }else{
-            return const Center(child: CircularProgressIndicator());
-          }
+                  )
+                else
+                  const SingleChildScrollView(),
+              ],
+            ),
+          );
         }
+      },
     );
   }
 

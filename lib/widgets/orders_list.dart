@@ -41,21 +41,23 @@ class _OrdersListState extends State<OrdersList> {
         builder: (context, snapshot) {
           if(snapshot.hasData){
             List<Order>? orders = snapshot.data;
-            return ListView.builder(
-              itemCount: orders!.length,
-              itemBuilder: (context, int i){
-                if(orders.isNotEmpty){
+            if(orders!.isNotEmpty) {
+              return ListView.builder(
+                itemCount: orders.length,
+                itemBuilder: (context, int i) {
                   return InkWell(
                     child: Container(
                       key: Key(orders[i].id.toString()),
                       margin: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 20),
                       child: Container(
-                        height: 80,
+                          height: 80,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                            border: Border.all(color: Colors.black, width: 2.0,),
+                            borderRadius: const BorderRadius.all(Radius
+                                .circular(10.0)),
+                            border: Border.all(color: Colors.black,
+                              width: 2.0,),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,9 +67,12 @@ class _OrdersListState extends State<OrdersList> {
                                   height: 100,
                                   width: 110,
                                   decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(8.0), bottomLeft: Radius.circular(8.0)),
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8.0),
+                                        bottomLeft: Radius.circular(8.0)),
                                     image: DecorationImage(
-                                      image: NetworkImage(orders[i].itemImagePath.toString()),
+                                      image: NetworkImage(
+                                          orders[i].itemImagePath.toString()),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -77,9 +82,12 @@ class _OrdersListState extends State<OrdersList> {
                                   height: 100,
                                   width: 110,
                                   decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), bottomLeft: Radius.circular(8.0)),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(8.0),
+                                        bottomLeft: Radius.circular(8.0)),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/work_image.png'),
+                                      image: AssetImage(
+                                          'assets/images/work_image.png'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -87,19 +95,23 @@ class _OrdersListState extends State<OrdersList> {
                               Container(
                                 width: 190.5,
                                 decoration: const BoxDecoration(
-                                  border: Border(left: BorderSide(width: 2.0, color: Colors.black)),
+                                  border: Border(left: BorderSide(
+                                      width: 2.0, color: Colors.black)),
                                 ),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.only(left: 10.0, top: 15.0),
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, top: 15.0),
                                       alignment: Alignment.topLeft,
                                       child: SizedBox(
                                         width: 170,
                                         child: Text(
-                                          'Имя: ' + orders[i].userClientName.toString(),
+                                          'Имя: ' + orders[i].userClientName
+                                              .toString(),
                                           maxLines: 1,
                                           overflow: TextOverflow.fade,
                                           softWrap: false,
@@ -111,17 +123,19 @@ class _OrdersListState extends State<OrdersList> {
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 10.0),
                                       alignment: Alignment.topLeft,
                                       child: SizedBox(
                                         width: 170,
                                         child: Text(
-                                          'Email: ' + orders[i].userClientEmail.toString(),
+                                          'Email: ' + orders[i].userClientEmail
+                                              .toString(),
                                           maxLines: 1,
                                           overflow: TextOverflow.fade,
                                           softWrap: false,
                                           style: const TextStyle(
-                                            fontSize: 14
+                                              fontSize: 14
                                           ),
                                         ),
                                       ),
@@ -131,8 +145,9 @@ class _OrdersListState extends State<OrdersList> {
                               ),
                               Container(
                                 child: IconButton(
-                                  icon: const Icon(Icons.clear_rounded, color: Colors.redAccent,),
-                                  onPressed: (){
+                                  icon: const Icon(Icons.clear_rounded,
+                                    color: Colors.redAccent,),
+                                  onPressed: () {
                                     db.deleteOrder(orders[i]);
                                     Utils.showSnackBar("Заявка отклонена");
                                   },
@@ -142,7 +157,7 @@ class _OrdersListState extends State<OrdersList> {
                           )
                       ),
                     ),
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
                           context, MaterialPageRoute(
                           builder: (context) =>
@@ -150,15 +165,17 @@ class _OrdersListState extends State<OrdersList> {
                       );
                     },
                   );
-                } else {
-                  return const Center(
-                    child: Text(
-                      "На ваши работы нет ни одной заявки",
-                    ),
-                  );
-                }
-              },
-            );
+                },
+              );
+            } else {
+              return const Center(child: Text(
+                'На ваши работы нет заявок',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ));
+            }
           }else{
             return const Center(child: CircularProgressIndicator());
           }
