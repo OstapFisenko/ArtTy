@@ -69,7 +69,14 @@ class _ItemListState extends State<ItemList> {
               children: <Widget>[
                 Container(
                   height: 50,
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black, width: 2)
+                  ),
                   alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
@@ -81,7 +88,8 @@ class _ItemListState extends State<ItemList> {
                           FocusScope.of(context).requestFocus(FocusNode());
                         },
                       ) : null,
-                      hintText: 'Name',
+                      hintText: 'Введите название картины...',
+                      border: InputBorder.none,
                     ),
                     onSubmitted: (value) {
 
@@ -99,7 +107,6 @@ class _ItemListState extends State<ItemList> {
                     child: ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, i) {
-                        log(items.toString());
                         return InkWell(
                           child: Container(
                             key: Key(items[i].id.toString()),
