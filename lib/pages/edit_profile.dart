@@ -128,13 +128,34 @@ class _ProfileEditState extends State<ProfileEdit> {
                                       width: 200,
                                     ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 55.0),
-                                    child: IconButton(
-                                      icon: Image.asset(
-                                        'assets/images/download.png',
+                                    padding: const EdgeInsets.only(top: 150.0, left: 0.0),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
                                       ),
-                                      iconSize: 75,
-                                      onPressed: selectFile,
+                                      child: IconButton(
+                                        padding: const EdgeInsets.all(4.0),
+                                        icon: Image.asset('assets/images/download.png',),
+                                        iconSize: 45,
+                                        onPressed: selectFile,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 150.0, left: 145.0),
+                                    child: Container(
+                                      //padding: EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: IconButton(
+                                        padding: const EdgeInsets.all(2.5),
+                                        icon: Image.asset('assets/images/photo-camera.png',),
+                                        iconSize: 47,
+                                        onPressed: (){},
+                                      ),
                                     ),
                                   ),
                                 ],

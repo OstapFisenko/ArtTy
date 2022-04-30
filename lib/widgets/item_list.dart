@@ -67,43 +67,43 @@ class _ItemListState extends State<ItemList> {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Container(
-                  height: 50,
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 2)
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.search, color: Colors.black,),
-                      suffixIcon: _searchController.text.isNotEmpty ? GestureDetector(
-                        child: const Icon(Icons.clear_rounded, color: Colors.black,),
-                        onTap: (){
-                          _searchController.clear();
-                          FocusScope.of(context).requestFocus(FocusNode());
-                        },
-                      ) : null,
-                      hintText: 'Введите название картины...',
-                      border: InputBorder.none,
-                    ),
-                    onSubmitted: (value) {
-
-                      setState(() {
-                        items = items.where((item) => item.name!.toLowerCase()
-                            .contains(value.toString().trim().toLowerCase())).toList();
-                        log(items.toString());
-                      });
-                    },
-                  ),
-                ),
+                // Container(
+                //   height: 50,
+                //   margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(15),
+                //     color: Colors.white,
+                //     border: Border.all(color: Colors.black, width: 2)
+                //   ),
+                //   alignment: Alignment.center,
+                //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                //   child: TextField(
+                //     controller: _searchController,
+                //     decoration: InputDecoration(
+                //       icon: const Icon(Icons.search, color: Colors.black,),
+                //       suffixIcon: _searchController.text.isNotEmpty ? GestureDetector(
+                //         child: const Icon(Icons.clear_rounded, color: Colors.black,),
+                //         onTap: (){
+                //           _searchController.clear();
+                //           FocusScope.of(context).requestFocus(FocusNode());
+                //         },
+                //       ) : null,
+                //       hintText: 'Введите название картины...',
+                //       border: InputBorder.none,
+                //     ),
+                //     onSubmitted: (value) {
+                //
+                //       setState(() {
+                //         items = items.where((item) => item.name!.toLowerCase()
+                //             .contains(value.toString().trim().toLowerCase())).toList();
+                //         log(items.toString());
+                //       });
+                //     },
+                //   ),
+                // ),
                 if(items.length != null)
                   SizedBox(
-                    height: 640,
+                    height: 700,
                     child: ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, i) {

@@ -24,7 +24,7 @@ class ItemEditPage extends StatefulWidget {
 
 class _ItemEditPageState extends State<ItemEditPage> {
 
-  late UserData user;
+  late UserPerson user;
   Item? item;
   Item itemEdit = Item();
   var db = DatabaseService();
@@ -38,7 +38,7 @@ class _ItemEditPageState extends State<ItemEditPage> {
     itemEdit?.name = widget.nameController.text.trim();
     itemEdit?.cost = double.parse(widget.costController.text.trim());
     itemEdit?.authorId = user.id;
-    itemEdit?.author = user.name;
+    //itemEdit?.author = user.name;
     if(pickedFile != null){
       final path = 'files/${pickedFile!.name}';
       final file = File(pickedFile!.path!);
@@ -68,7 +68,7 @@ class _ItemEditPageState extends State<ItemEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<UserData>(context);
+    user = Provider.of<UserPerson>(context);
 
     return StreamBuilder<Item>(
         stream: DatabaseService(uid: widget.id).getItemById,

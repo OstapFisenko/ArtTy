@@ -28,7 +28,7 @@ class _OrderItemState extends State<OrderItem> {
 
     try{
       await FlutterEmailSender.send(email);
-      platformResponse = 'Заявка принята, письмо отправленно покупателю';
+      platformResponse = 'Заявка принята';
     } catch(e) {
       platformResponse = e.toString();
     }
