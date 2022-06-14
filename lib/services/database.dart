@@ -114,8 +114,8 @@ class DatabaseService{
     return _itemsCollection.doc(uid).snapshots().map((DocumentSnapshot doc) => Item.fromJson(doc.id, doc.data() as Map<String, dynamic>));
   }
 
-  Future deleteItem(Item item) async{
-    DocumentReference itemRef = _itemsCollection.doc(item.id);
+  Future deleteItem(String itemId) async{
+    DocumentReference itemRef = _itemsCollection.doc(itemId);
     return itemRef.delete();
   }
 

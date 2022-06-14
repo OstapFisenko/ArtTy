@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../services/database.dart';
 import '../models/item.dart';
+import '../services/snack_bar.dart';
 import '../widgets/button.dart';
 import '../widgets/input.dart';
 
@@ -28,7 +29,7 @@ class _ItemEditPageState extends State<ItemEditPage> {
   Item? item;
   Item itemEdit = Item();
   var db = DatabaseService();
-  PlatformFile? pickedFile;
+  File? pickedFile;
   UploadTask? uploadTask;
 
   final formKey = GlobalKey<FormState>();
@@ -36,15 +37,15 @@ class _ItemEditPageState extends State<ItemEditPage> {
   _buttonSave(Item? itemEdit)async{
     itemEdit?.description = widget.descriptionController.text;
     itemEdit?.name = widget.nameController.text.trim();
-    itemEdit?.cost = double.parse(widget.costController.text.trim());
+    itemEdit?.cost = int.parse(widget.costController.text.trim());
     itemEdit?.authorId = user.id;
     //itemEdit?.author = user.name;
     if(pickedFile != null){
-      final path = 'files/${pickedFile!.name}';
-      final file = File(pickedFile!.path!);
+      final path = 'files/$pickedFile';
+      final file = pickedFile;
 
       final ref = FirebaseStorage.instance.ref().child(path);
-      uploadTask = ref.putFile(file);
+      uploadTask = ref.putFile(file!);
 
       final snapshot = await uploadTask!.whenComplete(() {});
 
@@ -55,15 +56,97 @@ class _ItemEditPageState extends State<ItemEditPage> {
 
     Navigator.pop(context);
   }
+  Widget bottomSheetPicker() {
+    return Container(
+      color: const Color(0xFF737373),
+      child: Container(
+        height: 220.0,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Загрузить изображение',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Камера',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.camera);
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Галерея',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.gallery);
+                        },
+                        icon: const Icon(
+                          Icons.photo,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-
-  Future selectFile() async{
-    final result = await FilePicker.platform.pickFiles();
-    if(result == null) return;
-
-    setState(() {
-      pickedFile = result.files.first;
-    });
+  Future selectFile(ImageSource source) async{
+    try {
+      final result = await ImagePicker().pickImage(source: source);
+      if(result == null) return;
+      setState(() {
+        pickedFile = File(result.path);
+      });
+    } on PlatformException catch (e) {
+      Utils.showSnackBar('$e');
+    }
   }
 
   @override
@@ -84,15 +167,6 @@ class _ItemEditPageState extends State<ItemEditPage> {
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Stack(
                     children: [
-
-                      Container(
-                        alignment: Alignment.topCenter,
-                        padding: const EdgeInsets.only(top: 220),
-                        child: Image.asset(
-                          'assets/images/logo_grey.png',
-                          width: 240,
-                        ),
-                      ),
                       SingleChildScrollView(
                         child: Column(
                           children: <Widget>[
@@ -113,7 +187,7 @@ class _ItemEditPageState extends State<ItemEditPage> {
                                       child: AspectRatio(
                                         aspectRatio: 1.5,
                                         child: Image.file(
-                                          File(pickedFile!.path!),
+                                          pickedFile!,
                                         ),
                                       )
                                     )
@@ -149,10 +223,20 @@ class _ItemEditPageState extends State<ItemEditPage> {
                                   Container(
                                     alignment: Alignment.center,
                                     padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 65.0),
-                                    child: IconButton(
-                                      onPressed: selectFile,
-                                      icon: Image.asset('assets/images/download.png'),
-                                      iconSize: 70,
+                                    child: Opacity(
+                                      opacity: 0.6,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            enableDrag: false,
+                                            // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                            builder: ((builder) => bottomSheetPicker()),
+                                          );
+                                        },
+                                        icon: Image.asset('assets/images/download.png'),
+                                        iconSize: 70,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -250,16 +334,13 @@ class _ItemEditPageState extends State<ItemEditPage> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: IconButton(
-                          onPressed: (){
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 40,
-                          ),
+                      IconButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 40,
                         ),
                       ),
                     ]

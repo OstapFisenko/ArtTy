@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:artty_app/pages/auth_page.dart';
 import 'package:artty_app/pages/confirm.dart';
-import 'package:artty_app/pages/home.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 import '../models/item.dart';
@@ -34,7 +31,7 @@ class _RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
 
   late UserPerson? user;
-  PlatformFile? pickedFile;
+  File? pickedFile;
   UploadTask? uploadTask;
 
   var db = DatabaseService(uid: '');
@@ -67,13 +64,97 @@ class _RegisterState extends State<Register> {
     super.initState();
   }
 
-  Future selectFile() async{
-    final result = await FilePicker.platform.pickFiles();
-    if(result == null) return;
+  Widget bottomSheetPicker() {
+    return Container(
+      color: const Color(0xFF737373),
+      child: Container(
+        height: 200.0,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Выбирите фото',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Камера',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.camera);
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Галерея',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.gallery);
+                        },
+                        icon: const Icon(
+                          Icons.photo,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-    setState(() {
-      pickedFile = result.files.first;
-    });
+  Future selectFile(ImageSource source) async{
+    try {
+      final result = await ImagePicker().pickImage(source: source);
+      if(result == null) return;
+      setState(() {
+        pickedFile = File(result.path);
+      });
+    } on PlatformException catch (e) {
+      Utils.showSnackBar('$e');
+    }
   }
 
   @override
@@ -91,11 +172,11 @@ class _RegisterState extends State<Register> {
         );
         User user = result.user!;
         if(pickedFile != null){
-          final path = 'users/${pickedFile!.name}';
-          final file = File(pickedFile!.path!);
+          final path = 'users/${pickedFile!.path}';
+          final file = pickedFile;
 
           final ref = FirebaseStorage.instance.ref().child(path);
-          uploadTask = ref.putFile(file);
+          uploadTask = ref.putFile(file!);
 
           final snapshot = await uploadTask!.whenComplete(() {});
 
@@ -147,7 +228,7 @@ class _RegisterState extends State<Register> {
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                   image: FileImage(
-                                    File(pickedFile!.path!),
+                                    pickedFile!,
                                   ),
                                   fit: BoxFit.cover
                               ),
@@ -165,7 +246,7 @@ class _RegisterState extends State<Register> {
                               'assets/images/download.png',
                             ),
                             iconSize: 75,
-                            onPressed: selectFile,
+                            onPressed: bottomSheetPicker,
                           ),
                         ),
                       ],

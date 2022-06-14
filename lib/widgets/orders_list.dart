@@ -80,7 +80,6 @@ class _OrdersListState extends State<OrdersList> {
                               else
                                 Container(
                                   height: 100,
-                                  width: 110,
                                   decoration: const BoxDecoration(
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(8.0),
@@ -93,7 +92,7 @@ class _OrdersListState extends State<OrdersList> {
                                   ),
                                 ),
                               Container(
-                                width: 190.5,
+                                width: 209.4,
                                 decoration: const BoxDecoration(
                                   border: Border(left: BorderSide(
                                       width: 2.0, color: Colors.black)),

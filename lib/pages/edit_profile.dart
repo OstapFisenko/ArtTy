@@ -2,13 +2,15 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:artty_app/widgets/input.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../models/item.dart';
 import '../models/user.dart';
 import '../services/database.dart';
+import '../services/snack_bar.dart';
 import '../widgets/edit_items_list.dart';
 
 class ProfileEdit extends StatefulWidget {
@@ -28,7 +30,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   late UserPerson user;
   DatabaseService db = DatabaseService();
   StreamSubscription<List<Item>>? itemsStreamSubscription;
-  PlatformFile? pickedFile;
+  File? pickedFile;
   UploadTask? uploadTask;
 
   String? imagePath;
@@ -41,23 +43,106 @@ class _ProfileEditState extends State<ProfileEdit> {
     }
     super.dispose();
   }
+  Widget bottomSheetPicker() {
+    return Container(
+      color: const Color(0xFF737373),
+      child: Container(
+        height: 220.0,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Загрузить изображение',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Камера',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.camera);
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Галерея',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 7),
+                        onPressed: (){
+                          selectFile(ImageSource.gallery);
+                        },
+                        icon: const Icon(
+                          Icons.photo,
+                          size: 50,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-  Future selectFile() async{
-    final result = await FilePicker.platform.pickFiles();
-    if(result == null) return;
-
-    setState(() {
-      pickedFile = result.files.first;
-    });
+  Future selectFile(ImageSource source) async{
+    try {
+      final result = await ImagePicker().pickImage(source: source);
+      if(result == null) return;
+      setState(() {
+        pickedFile = File(result.path);
+      });
+    } on PlatformException catch (e) {
+      Utils.showSnackBar('$e');
+    }
   }
 
   _buttonSave(String? name, String? email, String? imagePath)async{
     if(pickedFile != null){
-      final path = 'users/${pickedFile!.name}';
-      final file = File(pickedFile!.path!);
+      final path = 'users/$pickedFile';
+      final file = pickedFile;
 
       final ref = FirebaseStorage.instance.ref().child(path);
-      uploadTask = ref.putFile(file);
+      uploadTask = ref.putFile(file!);
 
       final snapshot = await uploadTask!.whenComplete(() {});
 
@@ -92,6 +177,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                         child: Column(
                           children: <Widget>[
                             Container(
+                              alignment: Alignment.topCenter,
                               child: Stack(
                                 children: [
                                   if(pickedFile != null)
@@ -102,7 +188,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
                                             image: FileImage(
-                                              File(pickedFile!.path!),
+                                              pickedFile!,
                                             ),
                                             fit: BoxFit.cover
                                         ),
@@ -127,34 +213,21 @@ class _ProfileEditState extends State<ProfileEdit> {
                                       'assets/images/person_avatar.png',
                                       width: 200,
                                     ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 150.0, left: 0.0),
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                      ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 60.0),
+                                    child: Opacity(
+                                      opacity: 0.6,
                                       child: IconButton(
-                                        padding: const EdgeInsets.all(4.0),
-                                        icon: Image.asset('assets/images/download.png',),
-                                        iconSize: 45,
-                                        onPressed: selectFile,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 150.0, left: 145.0),
-                                    child: Container(
-                                      //padding: EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: IconButton(
-                                        padding: const EdgeInsets.all(2.5),
-                                        icon: Image.asset('assets/images/photo-camera.png',),
-                                        iconSize: 47,
-                                        onPressed: (){},
+                                        onPressed: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            enableDrag: false,
+                                            // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                            builder: ((builder) => bottomSheetPicker()),
+                                          );
+                                        },
+                                        icon: Image.asset('assets/images/download.png'),
+                                        iconSize: 70,
                                       ),
                                     ),
                                   ),

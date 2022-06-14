@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent
+    statusBarColor: Colors.transparent,
   ));
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([

@@ -29,7 +29,8 @@ environment:
 dependencies:
   flutter_email_sender: ^5.1.0
   firebase_storage: ^10.2.12
-  file_picker: ^4.5.1
+  image_picker: ^0.8.5+1
+  permission_handler: ^9.2.0
   firebase_auth: ^3.3.12
   cloud_firestore:
   firebase_core:

@@ -99,7 +99,7 @@ class _UserItemsEditState extends State<UserItemsEdit> {
                                   ),
                                   child: MaterialButton(
                                     onPressed: (){
-                                      db.deleteItem(items[i]);
+                                      db.deleteItem(items[i].id!);
                                       Utils.showSnackBar("Успешно удалено");
                                     },
                                     minWidth: double.infinity,

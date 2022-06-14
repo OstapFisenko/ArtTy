@@ -232,6 +232,7 @@ class _OrderItemState extends State<OrderItem> {
                                 child: button('Принять', () {
                                   order.status = 'approved';
                                   DatabaseService().addOrder(order);
+                                  DatabaseService().deleteItem(order.itemId!);
                                   send(order.userClientEmail!, order.itemName!, 'Договорились');
                                 }),
                               ),
@@ -240,7 +241,7 @@ class _OrderItemState extends State<OrderItem> {
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             alignment: Alignment.center,
                             child: SizedBox(
-                              width: 220,
+                              width: 230,
                               height: 45,
                               child: MaterialButton(
                                 splashColor: Colors.red,

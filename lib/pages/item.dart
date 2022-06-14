@@ -321,7 +321,7 @@ class _ItemPageState extends State<ItemPage> {
                                                           child: Container(
                                                             alignment: Alignment.center,
                                                             height: 50,
-                                                            width: 300,
+                                                            width: 310,
                                                             decoration: const BoxDecoration(
                                                               color: Colors.black,
                                                               borderRadius: BorderRadius.all(Radius.circular(25.0)),

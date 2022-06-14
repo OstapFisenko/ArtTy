@@ -103,7 +103,7 @@ class _ItemListState extends State<ItemList> {
                 // ),
                 if(items.length != null)
                   SizedBox(
-                    height: 700,
+                    height: 743,
                     child: ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, i) {

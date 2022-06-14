@@ -8,7 +8,7 @@ class Order{
   String? itemName;
   String? itemDescription;
   String? itemImagePath;
-  double? itemCost;
+  int? itemCost;
   String? authorPhoto;
   String? status;
 

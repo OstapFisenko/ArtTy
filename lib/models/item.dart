@@ -6,7 +6,7 @@ class Item {
   String? userEmail;
   String? authorId;
   String? authorPhoto;
-  double? cost;
+  int? cost;
   String? imagePath;
 
   Item({this.id, this.author, this.description, this.name, this.authorId, this.authorPhoto, this.userEmail, this.cost, this.imagePath});
